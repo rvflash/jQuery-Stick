@@ -6,10 +6,16 @@
  * @requires jQuery 1.4.3+
  * @licenses Creative Commons BY-SA 2.0
  * @see https://github.com/rvflash/jQuery-Stick
+ * @version 1.0.1
  */
 ;
 (function($)
 {
+    var _defaults = {
+        latency: 250,
+        enable: false
+    };
+
     var stick = function (elem)
     {
         $(elem).each(function()
@@ -33,14 +39,25 @@
         });
     };
 
-    $.fn.stick = function()
+    $.fn.stick = function(settings)
     {
+        var _options;
+        if ('undefined' != typeof settings) {
+            _options = $.extend({}, _defaults, settings);
+        } else {
+            _options = _defaults;
+        }
         var _self = this;
 
+        // Do not use scroll event, slows the browser
         $(window).scroll(function() {
-            stick(_self);
+            _options.enable = true;
         });
-        // Currently displayed
-        $(window).scroll();
+        setInterval(function()
+        {
+            if (_options.enable) {
+                stick(_self);
+            }
+        }, _options.latency);
     };
 })(jQuery);
